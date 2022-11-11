@@ -88,6 +88,8 @@ houses_preproc <- function(houses) {
             1, 0
         )
     )
+
+    houses <- houses %>% dplyr::select(-c(property_id, description))
     houses
 }
 

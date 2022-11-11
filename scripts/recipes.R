@@ -1,14 +1,21 @@
+# FIXME: líneas 9, 10, 38, 59, 60
+
 library("tidyverse")
 library("tidymodels")
+library("sf")
 
 houses_bog <- readRDS("../stores/lum_dist_vars_imputed_bog.Rds")
 houses_med <- readRDS("../stores/lum_dist_vars_imputed_med.Rds")
+houses_bog <- st_drop_geometry(houses_bog)
+houses_med <- st_drop_geometry(houses_med)
+
 std_scaler <- sd(houses_med$price) / sd(houses_bog$price)
 houses_bog$price <- houses_bog$price * std_scaler
 mean_transformer <- mean(houses_med$price) - mean(houses_bog$price)
 houses_bog$price <- houses_bog$price + mean_transformer
 
 data <- rbind(houses_bog, houses_med)
+set.seed(10)
 data <- data %>%
     group_by(city) %>%
     slice_sample(n = 500) %>%
@@ -21,7 +28,6 @@ predictors <- data %>%
 # Create recipe
 
 data <- recipe(~., data = data) %>%
-    step_rm(property_id, description) %>%
     update_role(price, new_role = "outcome") %>%
     update_role(all_of(!!predictors), new_role = "predictor") %>%
     step_interact(
@@ -29,7 +35,9 @@ data <- recipe(~., data = data) %>%
             city:all_predictors()
     ) %>%
     step_poly(
-        surface_total, lum_val, starts_with("less"), starts_with("closest"),
+        surface_total,
+        # lum_val,
+        starts_with("less"), starts_with("closest"),
         degree = 3
     ) %>%
     prep() %>%
