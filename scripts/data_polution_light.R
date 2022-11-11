@@ -109,7 +109,6 @@ saveRDS(inputed_bog, file = "./stores/lum_dist_vars_imputed_bog.Rds")
 saveRDS(inputed_med, file = "./stores/lum_dist_vars_imputed_med.Rds")
 saveRDS(inputed_cal, file = "./stores/lum_dist_vars_imputed_cal.Rds")
 
-
 ############################ **Gráficos**  #####################################
 
 ### plot Bogota-UPZ}
