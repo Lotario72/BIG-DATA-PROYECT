@@ -104,7 +104,7 @@ leaflet() %>%
 
 inputed_bog <- st_drop_geometry(inputed_bog)
 inputed_med <- st_drop_geometry(inputed_med)
-inputed_med <- st_drop_geometry(inputed_cal)
+inputed_cal <- st_drop_geometry(inputed_cal)
 saveRDS(inputed_bog, file = "./stores/lum_dist_vars_imputed_bog.Rds")
 saveRDS(inputed_med, file = "./stores/lum_dist_vars_imputed_med.Rds")
 saveRDS(inputed_cal, file = "./stores/lum_dist_vars_imputed_cal.Rds")

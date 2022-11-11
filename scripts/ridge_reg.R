@@ -5,7 +5,7 @@ source("../scripts/tuning.R")
 
 wf <- workflows("ridge")
 grid <- grids("ridge")
-result <- wf %>% tuning("ridge", grid, validation_split)
+result <- wf %>% tuning(grid, validation_split)
 result %>% collect_metrics()
 
 # Select best model

@@ -5,7 +5,7 @@ source("../scripts/tuning.R")
 
 wf <- workflows("lasso")
 grid <- grids("lasso")
-result <- wf %>% tuning("lasso", grid, validation_split)
+result <- wf %>% tuning(grid, validation_split)
 result %>% collect_metrics()
 
 # Select best model

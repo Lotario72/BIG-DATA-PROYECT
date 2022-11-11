@@ -7,7 +7,7 @@ wf <- workflows("xgb")
 grid <- grids("xgb")
 
 set.seed(10)
-result <- wf %>% tuning("xgb", grid, validation_split)
+result <- wf %>% tuning(grid, validation_split)
 
 result %>% collect_metrics()
 
