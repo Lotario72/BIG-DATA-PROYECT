@@ -102,9 +102,9 @@ leaflet() %>%
   addPolygons(data = poly_cal[inputed_cal[1:10, ], ]) %>%
   addCircles(data = inputed_cal[1:10, ], color = "red")
 
-inputed_bog <- st_drop_geometry(inputed_bog)
-inputed_med <- st_drop_geometry(inputed_med)
-inputed_cal <- st_drop_geometry(inputed_cal)
+inputed_bog <- st_drop_geometry(inputed_bog) %>% dplyr::select(-property_id)
+inputed_med <- st_drop_geometry(inputed_med) %>% dplyr::select(-property_id)
+inputed_cal <- st_drop_geometry(inputed_cal) %>% dplyr::select(-property_id)
 saveRDS(inputed_bog, file = "./stores/lum_dist_vars_imputed_bog.Rds")
 saveRDS(inputed_med, file = "./stores/lum_dist_vars_imputed_med.Rds")
 saveRDS(inputed_cal, file = "./stores/lum_dist_vars_imputed_cal.Rds")

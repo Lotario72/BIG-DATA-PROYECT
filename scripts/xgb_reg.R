@@ -16,6 +16,9 @@ best <- select_best(result, metric = "mae")
 # Finalize the workflow with those parameter values
 final_wf <- wf %>% finalize_workflow(best)
 
+# Save workflow
+saveRDS(final_wf, "../stores/bestwf_xgb.R")
+
 # See variables arranged by importance
 final_wf %>%
     fit(validation) %>%

@@ -5,12 +5,12 @@ library("tidymodels")
 houses_bog <- readRDS("../stores/lum_dist_vars_imputed_bog.Rds")
 houses_med <- readRDS("../stores/lum_dist_vars_imputed_med.Rds")
 
-std_scaler <- sd(houses_med$price) / sd(houses_bog$price)
-houses_bog$price <- houses_bog$price * std_scaler
-mean_transformer <- mean(houses_med$price) - mean(houses_bog$price)
-houses_bog$price <- houses_bog$price + mean_transformer
+houses_bog <- houses_bog %>% mutate(price = scale(price))
+houses_med <- houses_med %>% mutate(price = scale(price))
 
 data <- rbind(houses_bog, houses_med)
+data <- na.omit(data)
+
 data <- data %>% mutate(
     across(
         c(
@@ -34,11 +34,11 @@ data <- data[-outliers]
 
 levels(data$city) <- c("Bogota", "Medellin")
 
-# set.seed(10)
-# data <- data %>%
-#     group_by(city) %>%
-#     slice_sample(n = 500) %>%
-#     ungroup()
+set.seed(10)
+data <- data %>%
+    group_by(city) %>%
+    slice_sample(n = 500) %>%
+    ungroup()
 
 predictors <- data %>%
     select(-price) %>%
@@ -57,7 +57,8 @@ data <- recipe(~., data = data) %>%
         upgrade_in,
         upgrade_out,
         garage,
-        light, estrato
+        light,
+        estrato
     ) %>%
     prep() %>%
     bake(new_data = NULL)

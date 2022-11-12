@@ -13,29 +13,32 @@ best <- select_best(result, metric = "mae")
 # Finalize the workflow with those parameter values
 final_wf <- wf %>% finalize_workflow(best)
 
+# Save workflow
+saveRDS(final_wf, "../stores/bestwf_elastic.R")
+
 # Check coefficients
 final_wf %>%
     fit(validation) %>%
     tidy() %>%
     print(n = Inf)
 
-# Fit on training, predict on test, and report performance
-lf <- last_fit(final_wf, data_split)
-# Performance metric on test set
-metric <- rmse(
-    data.frame(
-        test["Ingpcug"],
-        lf %>% extract_workflow() %>% predict(test)
-    ),
-    Ingpcug,
-    .pred
-)$.estimate
+# # Fit on training, predict on test, and report performance
+# lf <- last_fit(final_wf, data_split)
+# # Performance metric on test set
+# metric <- rmse(
+#     data.frame(
+#         test["Ingpcug"],
+#         lf %>% extract_workflow() %>% predict(test)
+#     ),
+#     Ingpcug,
+#     .pred
+# )$.estimate
 
-# Final report for this model
-report <- data.frame(
-    Problema = "Reg.", Modelo = "Elastic Net",
-    Penalidad = "0.00055", Mixtura = "0.9",
-    result %>% show_best(n = 1) %>% mutate(mean = metric)
-)
+# # Final report for this model
+# report <- data.frame(
+#     Problema = "Reg.", Modelo = "Elastic Net",
+#     Penalidad = "0.00055", Mixtura = "0.9",
+#     result %>% show_best(n = 1) %>% mutate(mean = metric)
+# )
 
-saveRDS(report, file = "../stores/elastic_reg.rds")
+# saveRDS(report, file = "../stores/elastic_reg.rds")

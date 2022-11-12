@@ -13,6 +13,9 @@ best <- select_best(result, metric = "mae")
 # Finalize the workflow with those parameter values
 final_wf <- wf %>% finalize_workflow(best)
 
+# Save workflow
+saveRDS(final_wf, "../stores/bestwf_ridge.R")
+
 # Check coefficients
 final_wf %>%
     fit(validation) %>%
