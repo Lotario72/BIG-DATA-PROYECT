@@ -20,7 +20,12 @@ specs <- function(model) {
             mtry = tune(),
             min_n = tune(),
         ) %>%
-            set_engine("ranger", verbose = TRUE, num.threads = 3) %>%
+            set_engine(
+                "ranger",
+                importance = "impurity",
+                verbose = TRUE,
+                num.threads = 3
+            ) %>%
             set_mode("regression")
     }
 

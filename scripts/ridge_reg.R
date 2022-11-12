@@ -9,9 +9,16 @@ result <- wf %>% tuning(grid, validation_split)
 result %>% collect_metrics()
 
 # Select best model
-best <- select_best(result, metric = "rmse")
+best <- select_best(result, metric = "mae")
 # Finalize the workflow with those parameter values
 final_wf <- wf %>% finalize_workflow(best)
+
+# Check coefficients
+final_wf %>%
+    fit(validation) %>%
+    tidy() %>%
+    print(n = Inf)
+
 # Fit on training, predict on test, and report performance
 lf <- last_fit(final_wf, data_split)
 # Performance metric on test set

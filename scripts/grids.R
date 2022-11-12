@@ -1,6 +1,6 @@
 grids <- function(model) {
     # Overall parameters
-    penalty <- seq(0.0001, 100, length.out = 100)
+    penalty <- seq(0.0001, 0.001, length.out = 100)
     mixture <- seq(0.1, 0.9, length.out = 4)
     mtry <- c(5, 8, 12)
     min_n <- c(10, 20, 30)
