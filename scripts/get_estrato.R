@@ -1,3 +1,5 @@
+source("./data_prep.R")
+
 require(pacman) 
 p_load(tidyverse,rio,skimr,viridis,
        sf, ## leer/escribir/manipular datos espaciales
@@ -5,11 +7,11 @@ p_load(tidyverse,rio,skimr,viridis,
        spdep, ## Construct neighbours list from polygon list 
        osmdata) ## Get OSM's data
 
-# cargar datos imputados
-houses_bog <- import("C:/Users/ADMIN/Documents/GitHub/Spatial-house-pricing-model/stores/imputed_bog.Rds")
-houses_med <- import("C:/Users/ADMIN/Documents/GitHub/Spatial-house-pricing-model/stores/imputed_med.Rds")
-houses_cal <- import("C:/Users/ADMIN/Documents/GitHub/Spatial-house-pricing-model/stores/imputed_cal.Rds")
+# cargar datos desde data_prep
+houses_bog <- dplyr::filter(bog_med, city == "Bogotá D.C")
+houses_med <- dplyr::filter(bog_med, city == "Medellín")
 
+  
 ## dataframe to sf
 houses_bog <- st_as_sf(x = houses_bog, coords=c("lon","lat"), crs=4326)
 houses_med <- st_as_sf(x = houses_med, coords=c("lon","lat"), crs=4326)
@@ -49,12 +51,9 @@ get_estrato <- function(city){
   
   ### Crear data estratos
   ## data manzanas
-  
-  
   mgn <- mgn %>% select(COD_DANE_ANM,UA_CLASE,COD_ENCUESTAS,U_VIVIENDA)
   
-  
-  ## data vivienda
+    ## data vivienda
   viv <- viv %>% select(COD_ENCUESTAS,UA_CLASE,U_VIVIENDA,V_TOT_HOG,VA1_ESTRATO)
   
   ## joing mnz-hogar-vivienda
@@ -71,7 +70,7 @@ get_estrato <- function(city){
   houses <- left_join(houses,db,by=c("MANZ_CCNCT"="COD_DANE_ANM"))
   
   estrato <- houses %>% select(property_id, med_VA1_ESTRATO)
-  
+  estrato <- st_drop_geometry(estrato)
   path_exp <- paste0("C:/Users/ADMIN/Documents/GitHub/Spatial-house-pricing-model/stores/estrato_", city, ".rds")
   export(estrato, path_exp)
 }
