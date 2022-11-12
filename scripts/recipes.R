@@ -20,7 +20,8 @@ data <- data %>% mutate(
             upgrade_in,
             upgrade_out,
             garage,
-            light
+            light,
+            estrato
         ),
         as.factor
     )
@@ -36,7 +37,7 @@ levels(data$city) <- c("Bogota", "Medellin")
 # set.seed(10)
 # data <- data %>%
 #     group_by(city) %>%
-#     slice_sample(n = 5000) %>%
+#     slice_sample(n = 500) %>%
 #     ungroup()
 
 predictors <- data %>%
@@ -56,7 +57,7 @@ data <- recipe(~., data = data) %>%
         upgrade_in,
         upgrade_out,
         garage,
-        light
+        light, estrato
     ) %>%
     prep() %>%
     bake(new_data = NULL)

@@ -7,6 +7,19 @@ library("dplyr")
 houses_bog <- dplyr::filter(bog_med, city == "Bogotá D.C")
 houses_med <- dplyr::filter(bog_med, city == "Medellín")
 
+estrato_bog <- readRDS("../stores/estrato_bog.rds")
+estrato_med <- readRDS("../stores/estrato_med.rds")
+estrato_cal <- readRDS("../stores/estrato_cal.rds")
+
+houses_bog <- houses_bog %>% left_join(estrato_bog, by = "property_id")
+houses_med <- houses_med %>% left_join(estrato_med, by = "property_id")
+houses_cal <- houses_cal %>% left_join(estrato_cal, by = "property_id")
+
+houses_bog <- houses_bog %>% dplyr::rename(estrato = med_VA1_ESTRATO)
+houses_med <- houses_med %>% dplyr::rename(estrato = med_VA1_ESTRATO)
+houses_cal <- houses_cal %>% dplyr::rename(estrato = med_VA1_ESTRATO)
+
+
 nei_bog <- readRDS("../stores/nei_bog.Rds")
 nei_med <- readRDS("../stores/nei_med.Rds")
 nei_cal <- readRDS("../stores/nei_cal.Rds")
@@ -25,7 +38,8 @@ mode_imputer <- function(df, neighbors) {
         "upgrade_in",
         "upgrade_out",
         "garage",
-        "light"
+        "light",
+        "estrato"
     )
 
     for (variable in vars_to_impute) {
@@ -91,6 +105,9 @@ tidy_base <- function(df) {
             ),
             surface_total = if_else(
                 surface_total == 0 | is.na(surface_total), imputed_surface_total, surface_total
+            ),
+            estrato = if_else(
+                estrato == 0 | is.na(estrato), imputed_estrato, estrato
             )
         ) %>%
         select(-starts_with("imputed"))
