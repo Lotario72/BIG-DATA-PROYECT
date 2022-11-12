@@ -1,15 +1,13 @@
 grids <- function(model) {
     # Overall parameters
-    penalty <- seq(0.0001, 0.001, length.out = 5)
+    penalty <- seq(0.0001, 100, length.out = 100)
     mixture <- seq(0.1, 0.9, length.out = 4)
-    over_ratio <- c(0.75)
     mtry <- c(5, 8, 12)
     min_n <- c(10, 20, 30)
     sample_size <- c(1)
 
     # XGB parameters
     mtry_xgb <- c(8)
-    min_n_xgb_clas <- c(10)
     min_n_xgb_reg <- c(20, 40, 100)
     tree_depth <- c(6, 8, 10)
     learn_rate <- c(0.00001, 0.001, 0.01)

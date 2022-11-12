@@ -5,7 +5,7 @@ source("../scripts/tuning.R")
 
 wf <- workflows("rf")
 grid <- grids("rf")
-result <- wf %>% tuning("rf", grid, validation_split)
+result <- wf %>% tuning(grid, validation_split)
 
 
 result %>% collect_metrics()
