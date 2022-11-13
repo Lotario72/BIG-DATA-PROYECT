@@ -41,18 +41,27 @@ worst_elastic <- worst_vars_lin(res_elastic, 0.1)
 worst_rf <- worst_vars_tree(res_rf, 2)
 worst_xgb <- worst_vars_tree(res_xgb, 0.02)
 
-worst_vars <- intersect(
+# Load worst variables from previous iteration
+previous_worst <- readRDS("../stores/worst_vars.Rds")
+
+# Update worst variables using variables from current iteration
+worst_vars <- c(
+    previous_worst,
     intersect(
         intersect(
             intersect(
-                worst_ridge$term,
-                worst_lasso$term
+                intersect(
+                    worst_ridge$term,
+                    worst_lasso$term
+                ),
+                worst_elastic$term
             ),
-            worst_elastic$term
+            worst_rf$Variable
         ),
-        worst_rf$Variable
-    ),
-    worst_xgb$Variable
+        worst_xgb$Variable
+    )
 )
+
+worst_vars <- unique(worst_vars)
 
 saveRDS(worst_vars, "../stores/worst_vars.Rds")
