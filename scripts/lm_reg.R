@@ -28,7 +28,10 @@ final_wf %>%
     print(n = Inf)
 
 # Save workflow
-saveRDS(result, "../stores/bestwf_lm.R")
+saveRDS(final_wf, "../stores/bestwf_lm.Rds")
+
+# Save result
+saveRDS(result, "../stores/result_lm.Rds")
 
 # # Fit on training, predict on test, and report performance
 # lf <- last_fit(final_wf, data_split)

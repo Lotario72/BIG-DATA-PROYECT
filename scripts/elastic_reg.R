@@ -27,10 +27,14 @@ final_wf <- wf %>% finalize_workflow(best)
 final_wf %>%
     fit(validation) %>%
     tidy() %>%
+    arrange(desc(estimate)) %>%
     print(n = Inf)
 
 # Save workflow
-saveRDS(result, "../stores/bestwf_elastic.R")
+saveRDS(final_wf, "../stores/bestwf_elastic.Rds")
+
+# Save result
+saveRDS(result, "../stores/result_elastic.Rds")
 
 # # Fit on training, predict on test, and report performance
 # lf <- last_fit(final_wf, data_split)

@@ -33,8 +33,8 @@ data <- data %>% mutate(
     )
 )
 
-outliers <- which(abs(data$price) > 3)
-data <- data[-outliers]
+# outliers <- which(abs(data$price) > 3)
+# data <- data[-outliers]
 
 
 levels(data$city) <- c("Bogota", "Medellin")
@@ -49,6 +49,10 @@ data <- data %>%
 predictors <- data %>%
     select(-price) %>%
     names()
+
+worst_vars <- readRDS("../stores/worst_vars.Rds")
+estrato <- stringr::str_detect(worst_vars, "estrato")
+worst_vars <- worst_vars[!estrato]
 
 # Create recipe to perform initial transformation
 
@@ -67,6 +71,7 @@ data <- recipe(~., data = data) %>%
         light,
         estrato
     ) %>%
+    step_interact(terms = ~ house_X1:has_role("num_pred")) %>%
     prep() %>%
     bake(new_data = NULL)
 
@@ -106,11 +111,11 @@ rec_reg <- recipe(price ~ ., data = validation) %>%
     #     ),
     #     fn = get_mode
     # ) %>%
-    step_normalize(has_role("num_pred"))
-#  %>%
-# step_poly(
-#     surface_total,
-#     lum_val,
-#     starts_with("less"), starts_with("closest"),
-#     degree = 2
-# )
+    step_normalize(has_role("num_pred")) %>%
+    step_poly(
+        surface_total,
+        lum_val,
+        starts_with("less"), starts_with("closest"),
+        degree = 2
+    ) %>%
+    step_rm(all_of(!!worst_vars))

@@ -19,7 +19,7 @@ tuning <- function(object,
     } else {
         tune <- tune::tune_grid(
             object = object,
-            grid = 10,
+            grid = 100,
             metrics = yardstick::metric_set(mae),
             resamples = resamples,
             control = ctrl_grid

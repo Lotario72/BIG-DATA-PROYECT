@@ -38,11 +38,11 @@ specs <- function(model) {
     # XGB - Regression
     if (model == "xgb") {
         spec <- boost_tree(
-            trees = 200,
+            trees = tune(),
             mtry = tune(),
             min_n = tune(),
             sample_size = tune(),
-            stop_iter = 5,
+            stop_iter = tune(),
             tree_depth = tune(),
             learn_rate = tune(),
             loss_reduction = tune()

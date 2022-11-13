@@ -33,7 +33,10 @@ final_wf %>%
     print(n = Inf)
 
 # Save workflow
-saveRDS(result, "../stores/bestwf_rf.R")
+saveRDS(final_wf, "../stores/bestwf_rf.Rds")
+
+# Save result
+saveRDS(result, "../stores/result_rf.Rds")
 
 
 # # Fit on training, predict on test, and report performance

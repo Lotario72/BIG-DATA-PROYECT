@@ -1,11 +1,11 @@
 library("stacks")
 
-lm <- readRDS("../stores/bestwf_lm.R")
-ridge <- readRDS("../stores/bestwf_ridge.R")
-lasso <- readRDS("../stores/bestwf_lasso.R")
-elastic <- readRDS("../stores/bestwf_elastic.R")
-rf <- readRDS("../stores/bestwf_rf.R")
-xgb <- readRDS("../stores/bestwf_xgb.R")
+lm <- readRDS("../stores/result_lm.Rds")
+ridge <- readRDS("../stores/result_ridge.Rds")
+lasso <- readRDS("../stores/result_lasso.Rds")
+elastic <- readRDS("../stores/result_elastic.Rds")
+rf <- readRDS("../stores/result_rf.Rds")
+xgb <- readRDS("../stores/result_xgb.Rds")
 
 final_st <-
     # initialize the stack

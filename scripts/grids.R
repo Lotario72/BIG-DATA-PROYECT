@@ -16,6 +16,8 @@ grids <- function(model) {
     tree_depth <- c(6, 8, 10)
     learn_rate <- c(0.00001, 0.001, 0.01)
     loss_reduction <- c(0.00001, 0.001, 0.01)
+    trees <- 200
+    stop_iter <- 5
 
 
     # Lasso - Regression
@@ -61,7 +63,9 @@ grids <- function(model) {
             sample_size = sample_size,
             tree_depth = tree_depth,
             learn_rate = learn_rate,
-            loss_reduction = loss_reduction
+            loss_reduction = loss_reduction,
+            trees = trees,
+            stop_iter = stop_iter
         )
     }
 
