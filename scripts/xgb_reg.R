@@ -6,18 +6,22 @@ source("../scripts/tuning.R")
 wf <- workflows("xgb")
 grid <- grids("xgb")
 
-set.seed(10)
-result <- wf %>% tuning(grid, validation_split)
+cl <- parallel::makeCluster(3)
+result <- wf %>% tuning(
+    # grid,
+    resamples = validation_split
+)
+parallel::stopCluster(cl)
 
-result %>% collect_metrics()
+result %>%
+    collect_metrics() %>%
+    arrange(mean) %>%
+    print()
 
 # Select best model
 best <- select_best(result, metric = "mae")
 # Finalize the workflow with those parameter values
 final_wf <- wf %>% finalize_workflow(best)
-
-# Save workflow
-saveRDS(final_wf, "../stores/bestwf_xgb.R")
 
 # See variables arranged by importance
 final_wf %>%
@@ -27,22 +31,25 @@ final_wf %>%
     dplyr::arrange(desc(Importance)) %>%
     print(n = Inf)
 
-# Fit on training, predict on test, and report performance
-lf <- last_fit(final_wf, data_split)
-# Performance metric on test set
-metric <- rmse(
-    data.frame(
-        test["Ingpcug"],
-        lf %>% extract_workflow() %>% predict(test)
-    ),
-    Ingpcug,
-    .pred
-)$.estimate
+# Save workflow
+saveRDS(result, "../stores/bestwf_xgb.R")
 
-# Final report for this model
-report <- data.frame(
-    Problema = "Reg.", Modelo = "XGBoost",
-    result %>% show_best(n = 1) %>% mutate(mean = metric)
-)
+# # Fit on training, predict on test, and report performance
+# lf <- last_fit(final_wf, data_split)
+# # Performance metric on test set
+# metric <- rmse(
+#     data.frame(
+#         test["Ingpcug"],
+#         lf %>% extract_workflow() %>% predict(test)
+#     ),
+#     Ingpcug,
+#     .pred
+# )$.estimate
 
-saveRDS(report, file = "../stores/xgb_reg.rds")
+# # Final report for this model
+# report <- data.frame(
+#     Problema = "Reg.", Modelo = "XGBoost",
+#     result %>% show_best(n = 1) %>% mutate(mean = metric)
+# )
+
+# saveRDS(report, file = "../stores/xgb_reg.rds")

@@ -3,16 +3,13 @@ source("../scripts/workflows.R")
 source("../scripts/grids.R")
 source("../scripts/tuning.R")
 
-wf <- workflows("lasso")
-grid <- grids("lasso")
-
-cl <- parallel::makeCluster(3)
+wf <- workflows("lm")
+grid <- grids("lm")
 result <- wf %>% tuning(
     # grid,
-    resamples = validation_split
+    resamples = validation_split,
+    model = "lm"
 )
-parallel::stopCluster(cl)
-
 result %>%
     collect_metrics() %>%
     arrange(mean) %>%
@@ -23,6 +20,7 @@ best <- select_best(result, metric = "mae")
 # Finalize the workflow with those parameter values
 final_wf <- wf %>% finalize_workflow(best)
 
+
 # Check coefficients
 final_wf %>%
     fit(validation) %>%
@@ -30,7 +28,7 @@ final_wf %>%
     print(n = Inf)
 
 # Save workflow
-saveRDS(result, "../stores/bestwf_lasso.R")
+saveRDS(result, "../stores/bestwf_lm.R")
 
 # # Fit on training, predict on test, and report performance
 # lf <- last_fit(final_wf, data_split)
@@ -46,9 +44,9 @@ saveRDS(result, "../stores/bestwf_lasso.R")
 
 # # Final report for this model
 # report <- data.frame(
-#     Problema = "Reg.", Modelo = "Lasso",
-#     Penalidad = "0.00055", Mixtura = "1",
+#     Problema = "Reg.", Modelo = "Lineal",
+#     Penalidad = "N/A", Mixtura = "N/A",
 #     result %>% show_best(n = 1) %>% mutate(mean = metric)
 # )
 
-# saveRDS(report, file = "../stores/lasso_reg.rds")
+# saveRDS(report, file = "../stores/lm_reg.rds")

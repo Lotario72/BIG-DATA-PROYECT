@@ -5,8 +5,14 @@ library("tidymodels")
 houses_bog <- readRDS("../stores/lum_dist_vars_imputed_bog.Rds")
 houses_med <- readRDS("../stores/lum_dist_vars_imputed_med.Rds")
 
-houses_bog <- houses_bog %>% mutate(price = scale(price))
-houses_med <- houses_med %>% mutate(price = scale(price))
+houses_bog <- houses_bog %>% mutate(
+    price = as.numeric(scale(price)),
+    estrato = floor(estrato)
+)
+houses_med <- houses_med %>% mutate(
+    price = as.numeric(scale(price)),
+    estrato = floor(estrato)
+)
 
 data <- rbind(houses_bog, houses_med)
 data <- na.omit(data)
@@ -27,17 +33,17 @@ data <- data %>% mutate(
     )
 )
 
-price_std <- (data$price - mean(data$price)) / sd(data$price)
-outliers <- which(abs(price_std) > 3)
+outliers <- which(abs(data$price) > 3)
 data <- data[-outliers]
 
 
 levels(data$city) <- c("Bogota", "Medellin")
 
+# Selector de muestra!!!
 set.seed(10)
 data <- data %>%
     group_by(city) %>%
-    slice_sample(n = 500) %>%
+    slice_sample(n = 2000) %>%
     ungroup()
 
 predictors <- data %>%
@@ -47,11 +53,12 @@ predictors <- data %>%
 # Create recipe to perform initial transformation
 
 data <- recipe(~., data = data) %>%
+    step_rm(property_id, city) %>%
     update_role(price, new_role = "outcome") %>%
     update_role(all_of(!!predictors), new_role = "predictor") %>%
     update_role(all_numeric_predictors(), new_role = "num_pred") %>%
     step_dummy(
-        city,
+        # city,
         house,
         sala_com,
         upgrade_in,
@@ -84,26 +91,26 @@ validation_split <- vfold_cv(validation, v = 5)
 
 # Recipe to prepare data for regression
 rec_reg <- recipe(price ~ ., data = validation) %>%
-    step_impute_mean(surface_total, lum_val) %>%
-    step_mutate_at(
-        all_of(
-            c(
-                "bedrooms",
-                "bathrooms",
-                "sala_com_X1",
-                "upgrade_in_X1",
-                "upgrade_out_X1",
-                "garage_X1",
-                "light_X1"
-            )
-        ),
-        fn = get_mode
-    ) %>%
+    # step_impute_mean(surface_total, lum_val) %>%
+    # step_mutate_at(
+    #     all_of(
+    #         c(
+    #             "bedrooms",
+    #             "bathrooms",
+    #             "sala_com_X1",
+    #             "upgrade_in_X1",
+    #             "upgrade_out_X1",
+    #             "garage_X1",
+    #             "light_X1"
+    #         )
+    #     ),
+    #     fn = get_mode
+    # ) %>%
     step_normalize(has_role("num_pred"))
-# %>%
+#  %>%
 # step_poly(
 #     surface_total,
 #     lum_val,
 #     starts_with("less"), starts_with("closest"),
-#     degree = 3
+#     degree = 2
 # )

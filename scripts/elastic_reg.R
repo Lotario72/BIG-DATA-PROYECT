@@ -5,22 +5,32 @@ source("../scripts/tuning.R")
 
 wf <- workflows("elastic")
 grid <- grids("elastic")
-result <- wf %>% tuning(grid, validation_split)
-result %>% collect_metrics()
+
+cl <- parallel::makeCluster(3)
+result <- wf %>% tuning(
+    # grid,
+    resamples = validation_split
+)
+parallel::stopCluster(cl)
+
+result %>%
+    collect_metrics() %>%
+    arrange(mean) %>%
+    print()
 
 # Select best model
 best <- select_best(result, metric = "mae")
 # Finalize the workflow with those parameter values
 final_wf <- wf %>% finalize_workflow(best)
 
-# Save workflow
-saveRDS(final_wf, "../stores/bestwf_elastic.R")
-
 # Check coefficients
 final_wf %>%
     fit(validation) %>%
     tidy() %>%
     print(n = Inf)
+
+# Save workflow
+saveRDS(result, "../stores/bestwf_elastic.R")
 
 # # Fit on training, predict on test, and report performance
 # lf <- last_fit(final_wf, data_split)

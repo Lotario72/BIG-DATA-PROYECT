@@ -1,12 +1,16 @@
 grids <- function(model) {
-    # Overall parameters
+    # Lasso/ridge/elastic parameters
     penalty <- seq(0.0001, 0.001, length.out = 100)
     mixture <- seq(0.1, 0.9, length.out = 4)
+
+    # RF parameters
     mtry <- c(5, 8, 12)
     min_n <- c(10, 20, 30)
-    sample_size <- c(1)
+    trees <- c(200, 300, 400)
+
 
     # XGB parameters
+    sample_size <- c(1)
     mtry_xgb <- c(8)
     min_n_xgb_reg <- c(20, 40, 100)
     tree_depth <- c(6, 8, 10)
@@ -43,7 +47,8 @@ grids <- function(model) {
     if (model == "rf") {
         grid <- expand.grid(
             mtry = mtry,
-            min_n = min_n
+            min_n = min_n,
+            trees = trees
         )
     }
 

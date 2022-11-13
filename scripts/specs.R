@@ -3,6 +3,12 @@ library("ranger")
 library("xgboost")
 
 specs <- function(model) {
+    # Linear - Regression
+    if (model == "lm") {
+        spec <- linear_reg() %>%
+            set_engine("lm")
+    }
+
     # Ridge/Lasso/Elastic - Regression
     if (model %in% c("ridge", "lasso", "elastic")) {
         spec <- linear_reg(
@@ -16,7 +22,7 @@ specs <- function(model) {
     # RF - Regression
     if (model == "rf") {
         spec <- rand_forest(
-            trees = 200,
+            trees = tune(),
             mtry = tune(),
             min_n = tune(),
         ) %>%
