@@ -4,7 +4,7 @@ source("../scripts/grids.R")
 source("../scripts/tuning.R")
 
 wf <- workflows("lm")
-grid <- grids("lm")
+# grid <- grids("lm")
 result <- wf %>% tuning(
     # grid,
     resamples = validation_split,

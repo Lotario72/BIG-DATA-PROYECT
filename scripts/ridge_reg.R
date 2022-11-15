@@ -4,12 +4,13 @@ source("../scripts/grids.R")
 source("../scripts/tuning.R")
 
 wf <- workflows("ridge")
-grid <- grids("ridge")
+# grid <- grids("ridge")
 
 cl <- parallel::makeCluster(3)
 result <- wf %>% tuning(
     # grid,
-    resamples = validation_split
+    resamples = validation_split,
+    model = "ridge"
 )
 parallel::stopCluster(cl)
 

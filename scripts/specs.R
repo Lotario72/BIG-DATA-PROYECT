@@ -9,11 +9,29 @@ specs <- function(model) {
             set_engine("lm")
     }
 
-    # Ridge/Lasso/Elastic - Regression
-    if (model %in% c("ridge", "lasso", "elastic")) {
+    # Elastic - Regression
+    if (model == "elastic") {
         spec <- linear_reg(
             penalty = tune(),
             mixture = tune()
+        ) %>%
+            set_engine("glmnet")
+    }
+
+    # Ridge - Regression
+    if (model == "ridge") {
+        spec <- linear_reg(
+            penalty = tune(),
+            mixture = 0
+        ) %>%
+            set_engine("glmnet")
+    }
+
+    # Lasso - Regression
+    if (model == "lasso") {
+        spec <- linear_reg(
+            penalty = tune(),
+            mixture = 1
         ) %>%
             set_engine("glmnet")
     }

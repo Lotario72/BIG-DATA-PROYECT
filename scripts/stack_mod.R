@@ -1,11 +1,13 @@
 library("stacks")
+source("../scripts/recipes.R")
 
-lm <- readRDS("../stores/result_lm.Rds")
-ridge <- readRDS("../stores/result_ridge.Rds")
-lasso <- readRDS("../stores/result_lasso.Rds")
-elastic <- readRDS("../stores/result_elastic.Rds")
-rf <- readRDS("../stores/result_rf.Rds")
-xgb <- readRDS("../stores/result_xgb.Rds")
+
+lm <- readRDS("../stores/bestwf_lm.R")
+ridge <- readRDS("../stores/bestwf_ridge.R")
+lasso <- readRDS("../stores/bestwf_lasso.R")
+elastic <- readRDS("../stores/bestwf_elastic.R")
+rf <- readRDS("../stores/bestwf_rf.R")
+xgb <- readRDS("../stores/bestwf_xgb.R")
 
 final_st <-
     # initialize the stack
@@ -20,6 +22,73 @@ final_st <-
     blend_predictions() %>% # evaluate candidate models
     fit_members()
 
-final_pred <- predict(final_st, validation) %>%
-    bind_cols(validation)
-data.frame((final_pred$price * 899818886) + 869755897 - (final_pred$.pred * 30000000) + 869755897)
+houses_cal <- readRDS("../stores/lum_dist_vars_imputed_cal.Rds")
+
+
+houses_cal <- houses_cal %>% mutate(
+  across(
+    c(
+      city,
+      house,
+      sala_com,
+      upgrade_in,
+      upgrade_out,
+      garage,
+      light,
+      estrato
+    ),
+    as.factor
+  )
+)
+
+
+houses_cal <- recipe(~., data = houses_cal) %>%
+  step_rm(property_id, city) %>%
+  update_role(price, new_role = "outcome") %>%
+  update_role(all_of(!!predictors), new_role = "predictor") %>%
+  update_role(all_numeric_predictors(), new_role = "num_pred") %>%
+  step_impute_mean(
+    surface_total, lum_val) %>%
+  step_impute_median(bathrooms) %>%
+  step_impute_mode(   
+    sala_com, upgrade_in, upgrade_out, garage, light, estrato) %>%
+  step_dummy(
+    # city,
+    house,
+    sala_com,
+    upgrade_in,
+    upgrade_out,
+    garage,
+    light,
+    estrato
+  ) %>%
+  prep() %>%
+  bake(new_data = NULL)
+
+
+final_pred <- predict(final_st, houses_cal) %>%
+    bind_cols(houses_cal)
+
+valor = 601842533/sd(final_pred$.pred)
+final_pred$price = final_pred$.pred*valor
+
+valor_2 = 555314430 - mean(final_pred$price)
+
+final_pred$price = final_pred$price+valor_2
+
+ ggplot(formulario, aes(x = price)) +
+  geom_histogram(bins = 50,color = "grey30", fill = "red") +
+  ggtitle("price") +
+  labs(x = "NA", y = "NA") +
+  theme_bw()
+
+
+formulario = read_delim("../stores/submission_template.csv")
+
+formulario$price = final_pred$price
+formulario = mutate(formulario, price = ifelse(
+  price<0,price*-1,price
+))
+
+
+write.csv(formulario,"../stores/predictions_bonilla_santofimio_velasquez.csv", row.names = FALSE)

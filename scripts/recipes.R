@@ -39,20 +39,20 @@ data <- data %>% mutate(
 
 levels(data$city) <- c("Bogota", "Medellin")
 
-# Selector de muestra!!!
-set.seed(10)
-data <- data %>%
-    group_by(city) %>%
-    slice_sample(n = 2000) %>%
-    ungroup()
+# # Selector de muestra!!!
+# set.seed(10)
+# data <- data %>%
+#     slice_sample(prop = 0.5)
+
 
 predictors <- data %>%
     select(-price) %>%
     names()
 
-worst_vars <- readRDS("../stores/worst_vars.Rds")
-estrato <- stringr::str_detect(worst_vars, "estrato")
-worst_vars <- worst_vars[!estrato]
+worst_vars <- readRDS("../stores/worst_vars4.Rds")
+# worst_vars <- readRDS("../stores/worst_xgb4.Rds")
+# estrato <- stringr::str_detect(worst_vars, "estrato")
+# worst_vars <- worst_vars[!estrato]
 
 # Create recipe to perform initial transformation
 
@@ -92,10 +92,10 @@ rm(train_temp)
 
 
 set.seed(10)
-validation_split <- vfold_cv(validation, v = 5)
+validation_split <- vfold_cv(train, v = 5)
 
 # Recipe to prepare data for regression
-rec_reg <- recipe(price ~ ., data = validation) %>%
+rec_reg <- recipe(price ~ ., data = train) %>%
     # step_impute_mean(surface_total, lum_val) %>%
     # step_mutate_at(
     #     all_of(

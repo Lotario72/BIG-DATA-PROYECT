@@ -4,12 +4,13 @@ source("../scripts/grids.R")
 source("../scripts/tuning.R")
 
 wf <- workflows("lasso")
-grid <- grids("lasso")
+# grid <- grids("lasso")
 
 cl <- parallel::makeCluster(3)
 result <- wf %>% tuning(
     # grid,
-    resamples = validation_split
+    resamples = validation_split,
+    model = "lasso"
 )
 parallel::stopCluster(cl)
 
