@@ -1,0 +1,17 @@
+% Please add the following required packages to your document preamble:
+% \usepackage{booktabs}
+\begin{table}[]
+\begin{tabular}{@{}llll@{}}
+\toprule
+Hiperparámetros                        & Min.                      & Max.                      & Particiones               \\ \midrule
+\multicolumn{1}{|l|}{Penalizacion}     & \multicolumn{1}{l|}{0.01} & \multicolumn{1}{l|}{0.8}  & \multicolumn{1}{l|}{100}  \\ \midrule
+\multicolumn{1}{|l|}{Mixtura}          & \multicolumn{1}{l|}{0.02} & \multicolumn{1}{l|}{0.05} & \multicolumn{1}{l|}{100}  \\ \midrule
+\multicolumn{1}{|l|}{Árboles}          & \multicolumn{1}{l|}{10}   & \multicolumn{1}{l|}{2000} & \multicolumn{1}{l|}{1000} \\ \midrule
+\multicolumn{1}{|l|}{Profundidad}      & \multicolumn{1}{l|}{2}    & \multicolumn{1}{l|}{16}   & \multicolumn{1}{l|}{8}    \\ \midrule
+\multicolumn{1}{|l|}{Folds}            & \multicolumn{1}{l|}{5}    & \multicolumn{1}{l|}{8}    & \multicolumn{1}{l|}{3}    \\ \midrule
+\multicolumn{1}{|l|}{Tamaño nodo}      & \multicolumn{1}{l|}{2}    & \multicolumn{1}{l|}{40}   & \multicolumn{1}{l|}{20}   \\ \midrule
+\multicolumn{1}{|l|}{Predictores}      & \multicolumn{1}{l|}{5}    & \multicolumn{1}{l|}{35}   & \multicolumn{1}{l|}{30}   \\ \midrule
+\multicolumn{1}{|l|}{Tasa aprendizaje} & \multicolumn{1}{l|}{0.01} & \multicolumn{1}{l|}{0.1}  & \multicolumn{1}{l|}{100}  \\ \midrule
+Reducción pérdida                      & 10\textasciicircum{}-8    & 10\textasciicircum{}-1    & 100                       \\ \bottomrule
+\end{tabular}
+\end{table}
